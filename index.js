@@ -70,14 +70,13 @@ const Customer = new Schema({
     name:String,
     father_name:String,
     dob:Date,
-    age:Number,
     phone:Number,
     email:String,
     gender:String,
     interests:[],
     address:String,
-    state:String,
-    city:String,
+    state:Number,
+    city:Number,
     createdOn:{
         type:Date,
         default:Date.now

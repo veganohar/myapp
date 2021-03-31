@@ -9,24 +9,23 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <script src="form1.js"></script>
     </head>
     
     <body>
-        <div class="container text-center">
+        <div class="container-fluid text-center">
             <h1 class="m-5">Form Example</h1>
-            <form onsubmit="onFormSubmit(event)">
+            <form onsubmit="onFormSubmit(event)" id="dataForm">
                 <label>Name</label>
             <input type="text" id="name" placeholder="Full name">
             <br> <br>
             <label>Father's Name</label>
-            <input type="text" id="f_name" placeholder="Fathers name">
+            <input type="text" id="father_name" placeholder="Fathers name">
             <br> <br>
             <label>DOB</label>
             <input type="date" id="dob" placeholder="dateofbirth"> <br><br>
-            <label>Age</label>
-            <input type="number" id="age" placeholder="age"> <br><br>
             <label>Phone Number</label>
-            <input type="number" id="pno" placeholder="phonenumber"> <br> <br>
+            <input type="number" id="phone" placeholder="phonenumber"> <br> <br>
             <label>E-mail</label>
             <input type="email" id="email" placeholder="email"> <br> <br>
             <label>Gender</label>
@@ -43,157 +42,43 @@
                 </span>
               </div><br> <br>
             <label>Address</label>
-            <textarea id="address" name="address" rows="4" cols="50">
+            <textarea id="address" rows="4" cols="50">
             </textarea>
             <br><br>
             <label>State</label>
-            <select id="state" onchange="onStateSel(event)"></select>
+            <select id="state" onchange="onStateSel()"></select>
             <br><br>
             <label>Cities</label>
             <select id="city"></select>
-                <button type="submit" class="btn btn-primary">Submit</button>
+            <br><br>
+                <button type="submit" class="btn btn-primary" id="sbtn">Submit</button>
+                <button type="button" class="btn btn-warning" onclick="onClear()">Clear</button>
             </form>
+
+            <div class="mt-4">
+                <table class="table" id="dataTable">
+                        <thead>
+                            <tr>
+                                <th>S.No</th>
+                                <th>Name</th>
+                                <th>Fther's Name</th>
+                                <th>DOB</th>
+                                <th>Age</th>
+                                <th>Phone</th>
+                                <th>Email</th>
+                                <th>Gender</th>
+                                <th>Interests</th>
+                                <th>Address</th>
+                                <th>State</th>
+                                <th>City</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                </table>
+            </div>
+
         </div>
-    
-        <script>
 
-            var states = [
-                {
-                    id:1,
-                    name:'Andhra Pradesh'
-                },
-                {
-                    id:2,
-                    name:'Kerala'
-                },
-                {
-                    id:3,
-                    name:'Tamilnadu'
-                }
-            ];
-            var cities = [
-                {
-                    id:1,
-                    name:'Guntur',
-                    stateId:1
-                },
-                {
-                    id:2,
-                    name:'Vizag',
-                    stateId:1
-                },
-                {
-                    id:3,
-                    name:'Nellore',
-                    stateId:1
-                },
-                {
-                    id:4,
-                    name:'Kochi',
-                    stateId:2
-                },
-                {
-                    id:5,
-                    name:'Ernakulam',
-                    stateId:2
-                },
-                {
-                    id:6,
-                    name:'Trivendram',
-                    stateId:2
-                },
-                {
-                    id:7,
-                    name:'Chennai',
-                    stateId:3
-                },
-                {
-                    id:8,
-                    name:'Coimbatore',
-                    stateId:3
-                },
-                {
-                    id:9,
-                    name:'Kanchipuram',
-                    stateId:3
-                }
-            ];
-                var selState;
-            window.onload = function(){
-                generateStates();
-            }
-
-            function generateStates(){
-                let options = `<option value="" selected disabled>Select a State</option>`;
-                for(let e of states){
-                    options  += `<option value="${e.id}">${e.name}</option>`;
-                }
-                document.getElementById("state").innerHTML = options;
-            }
-
-
-            function onStateSel(e){
-                selState = document.querySelector(`option[value='${e.target.value}']`).innerText;
-                let filteredCities = [];
-                let sid = e.target.value;
-                for(let e of cities){
-                    if(e.stateId==sid){
-                        filteredCities.push(e);
-                    }
-                }
-                console.log(filteredCities);
-                generateCities(filteredCities);
-            }
-
-            function generateCities(filteredCities){
-                let options = `<option value="" selected disabled>Select a City</option>`;
-                for(let e of filteredCities){
-                    options  += `<option value="${e.name}">${e.name}</option>`;
-                }
-                document.getElementById("city").innerHTML = options;
-            }
-
-            function onFormSubmit(e) {
-                e.preventDefault();
-                let interests = document.querySelectorAll("input[name='interest']:checked");
-                let choose = [];
-                for(let e of interests){
-                    choose.push(e.value);
-                }
-                let obj = {
-                    name: document.getElementById("name").value,
-                    f_name: document.getElementById("f_name").value,
-                    dob: document.getElementById("dob").value,
-                    age: document.getElementById("age").value,
-                    pno: document.getElementById("pno").value,
-                    email: document.getElementById("email").value,
-                    gender: document.querySelector("input[name='gender']:checked").value,
-                    interests: choose,
-                    address: document.getElementById("address").value,
-                    state: selState,
-                    city: document.getElementById("city").value,
-                }
-                // console.log(obj);
-                callApi(obj);
-            }
-    
-            function callApi(data) {
-                let api = "http://localhost:3000/saveData"; 
-                let options = {
-                    method: "POST",
-                    headers: {
-                        "content-type": "application/json"
-                    },
-                    body: JSON.stringify(data)
-                }
-                fetch(api, options).then(response => response.json())
-                    .then(data => {
-                        console.log(data);
-                    })
-            }
-    
-        </script>
-    
     </body>
     
     </html>
