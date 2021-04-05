@@ -71,7 +71,7 @@ window.onload = function () {
 }
 
 function getData() {
-    let api = "http://localhost:3000/getData";
+    let api = "http://localhost:3000/api/customers/getAllCustomers";
     fetch(api).then(res => res.json()).then(
         data => {
             console.log(data);
@@ -156,7 +156,7 @@ function onEdit(obj) {
 
 
 function onDelete(id) {
-    let api = `http://localhost:3000/deleteData/${id}`;
+    let api = `http://localhost:3000/api/customers/deleteCustomer/${id}`;
     let options = {
         method: "DELETE"
     }
@@ -230,7 +230,7 @@ function onFormSubmit(e) {
 }
 
 function saveData(data) {
-    let api = "http://localhost:3000/saveData";
+    let api = "http://localhost:3000/api/customers/createCustomer";
     let options = {
         method: "POST",
         headers: {
@@ -251,7 +251,7 @@ function updateData(data) {
     data._id = selId;
     console.log(data);
 
-    let api = "http://localhost:3000/updateData";
+    let api = "http://localhost:3000/api/customers/updateCustomer";
     let options = {
         method: "PUT",
         headers: {
