@@ -6,4 +6,5 @@ module.exports = function(app){
     app.get("/api/customers/getAllCustomers", controller.getAllCustomers);
     app.put("/api/customers/updateCustomer", controller.updateCustomer);
     app.delete("/api/customers/deleteCustomer/:cid", controller.deleteCustomer);
+    app.get("/api/customers/generateExcel", controller.generateExcel);
 }
