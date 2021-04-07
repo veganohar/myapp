@@ -5,7 +5,13 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const dbconfig = require("./app/config/db.config");
 const db = require("./app/models");
+const fs = require("fs");
 
+if (!fs.existsSync("reports")){
+    fs.mkdirSync("reports");
+}
+
+app.use(express.static("reports"));
 app.use(cors());
 
 app.listen(port, () => {

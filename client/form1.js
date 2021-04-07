@@ -80,6 +80,15 @@ function getData() {
     )
 }
 
+function generateExcel(){
+    let api = "http://localhost:3000/api/customers/generateExcel";
+    fetch(api).then(res => res.json()).then(
+        data => {
+            console.log(data);
+            window.open(data.filepath);
+        }
+    )
+}
 
 function showDatainTable(data) {
     while (tbl.rows.length > 1) {
@@ -91,7 +100,7 @@ function showDatainTable(data) {
         <td>${i + 1}</td>
         <td>${obj.name}</td>
         <td>${obj.father_name}</td>
-        <td>${obj.dob.substr(0, 10).split("-").reverse().join("/")}</td>
+        <td>${obj.dob?obj.dob.substr(0, 10).split("-").reverse().join("/"):''}</td>
         <td>${findAge(obj.dob)}</td>
         <td>${obj.phone}</td>
         <td>${obj.email}</td>

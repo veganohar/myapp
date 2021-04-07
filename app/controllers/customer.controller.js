@@ -1,7 +1,8 @@
 const db = require("../models");
 const Customer = db.customer;
 const Excel = require('exceljs');
-
+const PdfPrinter = require('pdfmake/src/printer');
+var printer = new PdfPrinter();
 exports.createCustomer = (req,res)=>{
     let obj = req.body;
     let customerData = new Customer();
@@ -67,18 +68,21 @@ exports.generateExcel =  (req,res)=>{
         if(err){
             return res.status(500).send({message:err})
         }
-           let data = await createExcelFile(customers);
+           let filename = await createExcelFile(customers);
         res.status(200).send({
             statusCode:200,
-            data:customers
+            message:"Excel Generated Successfully",
+            filepath:'http://localhost:3000/'+filename
         })
     })
 }
 
 
-createExcelFile = (data)=>{
-    let workbook = new Excel.Workbook()
-    let worksheet = workbook.addWorksheet('samplexl')
+createExcelFile = async (data)=>{
+    let workbook = new Excel.Workbook();
+
+    let worksheet = workbook.addWorksheet('samplexl');
+    let worksheet2 = workbook.addWorksheet('interests');
     worksheet.columns = [
         {header: 'S.No', key: 'index'},
         {header: 'Name', key: 'name'},
@@ -88,45 +92,60 @@ createExcelFile = (data)=>{
         {header: 'Phone', key: 'phone'},
         {header: 'Email', key: 'email'},
         {header: 'Gender', key: 'gender'},
-        {header: 'Interests', key: 'interests'},
+        {header: 'Interests', key: 'hobbies'},
         {header: 'Address', key: 'address'},
         {header: 'State', key: 'state'},
         {header: 'City', key: 'city'},
       ];
 
+      worksheet2.columns = [
+        {header: 'S.No', key: 'sno'},
+        {header: 'Name', key: 'name'},
+        {header: 'Interest', key: 'interest'}
+      ]
+
       worksheet.columns.forEach(column => {
         column.width = column.header.length < 12 ? 12 : column.header.length;
       })
 
+      worksheet2.columns.forEach(column => {
+        column.width = column.header.length < 12 ? 12 : column.header.length;
+      })
+
       worksheet.getRow(1).font = {bold: true}
+      worksheet2.getRow(1).font = {bold: true}
 
-
+      let sno = 0;
       data.forEach((e, index) => {
         let rowIndex = index + 1
         let obj = e;
         obj.index = rowIndex;
         obj.age = findAge(obj.dob);
-        obj.interests = obj.interests;
-        console.log(obj.interests);
+        obj.hobbies = obj.interests.join(",");
         worksheet.addRow(obj);
+
+        obj.interests.forEach((e)=>{
+            let obj1 = {};
+            sno++;
+            obj1.sno = sno;
+            obj1.name = obj.name;
+            obj1.interest = e;
+            worksheet2.addRow(obj1);
+        })
+
       })
 
-    // worksheet.addRows(data);
 
       worksheet.views = [
         { state: 'frozen', xSplit: 0, ySplit: 1 }
       ]
-      workbook.xlsx.writeFile('samplexl.xlsx')
-      return true;
+      worksheet2.views = [
+        { state: 'frozen', xSplit: 0, ySplit: 1 }
+      ]
+     await workbook.xlsx.writeFile('reports/samplexl.xlsx')
+      return `samplexl.xlsx`;
 }
 
-
-function formInterests(interests){
-    let s = interests.join(",");
-    
-    return s.substr(2,s.length-3);
-    
-}
 
 function findAge(dob){
     let bDay = new Date(dob);
@@ -138,4 +157,18 @@ function findAge(dob){
         age--;
     }
     return age;
+}
+
+
+exports.generatePDF = (req,res)=>{
+    var dd = {
+        content: [
+            'First paragraph',
+            'Another paragraph'
+        ]
+    }
+    var pdfDoc = printer.createPdfKitDocument(dd);
+    pdfDoc.pipe(fs.createWriteStream("samplepdf"));
+pdfDoc.end();
+res.send("success");
 }
