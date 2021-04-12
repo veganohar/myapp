@@ -202,3 +202,4 @@ exports.generateReport = (req, res) => {
     })
 
 }
+

@@ -33,6 +33,7 @@ db.mongoose.connect(`mongodb://${dbconfig.HOST}:${dbconfig.PORT}/${dbconfig.DB}`
 })
 
 app.use(bodyParser.json());
+app.set('view engine', 'ejs');
 
 app.get("/", (req, res) => {
     res.send("Hello Node Js");
@@ -40,3 +41,4 @@ app.get("/", (req, res) => {
 
 
 require("./app/routes/customer.routes")(app);
+require("./app/routes/ejs.routes")(app);
