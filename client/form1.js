@@ -80,12 +80,13 @@ function getData() {
     )
 }
 
-function generateExcel(){
-    let api = "http://localhost:3000/api/customers/generateExcel";
+
+function generateReport(t){
+    let api = "http://localhost:3000/api/customers/generateReport/"+t;
     fetch(api).then(res => res.json()).then(
         data => {
-            console.log(data);
             window.open(data.filepath);
+             // download(data.filepath, "samplepdf.pdf");
         }
     )
 }
@@ -100,7 +101,7 @@ function showDatainTable(data) {
         <td>${i + 1}</td>
         <td>${obj.name}</td>
         <td>${obj.father_name}</td>
-        <td>${obj.dob?obj.dob.substr(0, 10).split("-").reverse().join("/"):''}</td>
+        <td>${obj.dob ? obj.dob.substr(0, 10).split("-").reverse().join("/") : ''}</td>
         <td>${findAge(obj.dob)}</td>
         <td>${obj.phone}</td>
         <td>${obj.email}</td>
@@ -284,3 +285,16 @@ function onClear() {
     document.getElementById("sbtn").innerText = "Save";
     selId = null;
 }
+
+function download(url, filename) {
+    fetch(url).then(function(t) {
+        return t.blob().then((b)=>{
+            var a = document.createElement("a");
+            a.href = URL.createObjectURL(b);
+            a.setAttribute("download", filename);
+            a.click();
+        }
+        );
+    });
+    }
+

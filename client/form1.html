@@ -55,7 +55,9 @@
                 <button type="button" class="btn btn-warning" onclick="onClear()">Clear</button>
             </form>
 
-            <button class="btn btn-success" onclick="generateExcel()">Generate Excel</button>
+            <button class="btn btn-success" onclick="generateReport('excel')">Generate Excel</button>
+            <button class="btn btn-info" onclick="generateReport('pdf')">Generate PDF</button>
+            
             <div class="mt-4">
                 <table class="table" id="dataTable">
                         <thead>

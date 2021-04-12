@@ -7,7 +7,8 @@ const dbconfig = require("./app/config/db.config");
 const db = require("./app/models");
 const fs = require("fs");
 
-if (!fs.existsSync("reports")){
+
+if (!fs.existsSync("reports")) {
     fs.mkdirSync("reports");
 }
 
@@ -23,10 +24,10 @@ db.mongoose.connect(`mongodb://${dbconfig.HOST}:${dbconfig.PORT}/${dbconfig.DB}`
     useUnifiedTopology: true,
     useFindAndModify: false,
     useCreateIndex: true
-}).then(()=>{
-    try{
+}).then(() => {
+    try {
         console.log("Database Connection Established Successfully");
-    }catch(err){
+    } catch (err) {
         console.log(err);
     }
 })
