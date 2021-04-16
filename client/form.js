@@ -1,64 +1,5 @@
-var states = [
-    {
-        id: 1,
-        name: 'Andhra Pradesh'
-    },
-    {
-        id: 2,
-        name: 'Kerala'
-    },
-    {
-        id: 3,
-        name: 'Tamilnadu'
-    }
-];
-var cities = [
-    {
-        id: 1,
-        name: 'Guntur',
-        stateId: 1
-    },
-    {
-        id: 2,
-        name: 'Vizag',
-        stateId: 1
-    },
-    {
-        id: 3,
-        name: 'Nellore',
-        stateId: 1
-    },
-    {
-        id: 4,
-        name: 'Kochi',
-        stateId: 2
-    },
-    {
-        id: 5,
-        name: 'Ernakulam',
-        stateId: 2
-    },
-    {
-        id: 6,
-        name: 'Trivendram',
-        stateId: 2
-    },
-    {
-        id: 7,
-        name: 'Chennai',
-        stateId: 3
-    },
-    {
-        id: 8,
-        name: 'Coimbatore',
-        stateId: 3
-    },
-    {
-        id: 9,
-        name: 'Kanchipuram',
-        stateId: 3
-    }
-];
+var states = [];
+var cities = [];
 var isEdit = false;
 var selId;
 var dataForm;
@@ -66,8 +7,19 @@ var tbl;
 window.onload = function () {
     tbl = document.getElementById("dataTable");
     dataForm = document.getElementById("dataForm");
-    generateStates();
+    getAllStates();
     getData();
+}
+
+function getAllStates(){
+    let api = "http://localhost:3000/api/states/getAllStates";
+    fetch(api).then(res => res.json()).then(
+        data => {
+            console.log(data);
+            states = data.data;
+            generateStates();
+        }
+    )
 }
 
 function getData() {
@@ -108,8 +60,8 @@ function showDatainTable(data) {
         <td>${obj.gender}</td>
         <td>${obj.interests}</td>
         <td>${obj.address}</td>
-        <td>${stateName(obj.state)}</td>
-        <td>${cityName(obj.city)}</td>
+        <td>${obj.city.state.name}</td>
+        <td>${obj.city.name}</td>
         <td>
             <button class="btn btn-info" onclick="onEdit('${encodeURIComponent(JSON.stringify(obj))}')">Edit</button>
             <button class="btn btn-danger" onclick="onDelete('${obj._id}')">Delete</button>
@@ -118,27 +70,6 @@ function showDatainTable(data) {
         tbl.insertAdjacentHTML("beforeend", tRow);
     }
 
-}
-
-
-function stateName(sid) {
-    let state;
-    states.filter(e => {
-        if (e.id == sid) {
-            state = e.name;
-        }
-    })
-    return state;
-}
-
-function cityName(cid) {
-    let city;
-    cities.filter(e => {
-        if (e.id == cid) {
-            city = e.name;
-        }
-    })
-    return city;
 }
 
 function onEdit(obj) {
@@ -192,27 +123,31 @@ function findAge(d) {
 function generateStates() {
     let options = `<option value="" selected disabled>Select a State</option>`;
     for (let e of states) {
-        options += `<option value="${e.id}">${e.name}</option>`;
+        options += `<option value="${e._id}">${e.name}</option>`;
     }
     document.getElementById("state").innerHTML = options;
 }
 
 
 function onStateSel() {
-    let filteredCities = [];
     let sid = document.getElementById("state").value;
-    for (let e of cities) {
-        if (e.stateId == sid) {
-            filteredCities.push(e);
+    console.log(sid);
+
+    let api = `http://localhost:3000/api/cities/getCitiesbyState/${sid}`;
+    fetch(api).then(res => res.json()).then(
+        data => {
+            console.log(data);
+            cities = data.data;
+            console.log(cities);
+            generateCities();
         }
-    }
-    generateCities(filteredCities);
+    )
 }
 
-function generateCities(filteredCities) {
+function generateCities() {
     let options = `<option value="" selected disabled>Select a City</option>`;
-    for (let e of filteredCities) {
-        options += `<option value="${e.id}">${e.name}</option>`;
+    for (let e of cities) {
+        options += `<option value="${e._id}">${e.name}</option>`;
     }
     document.getElementById("city").innerHTML = options;
 }
@@ -233,7 +168,7 @@ function onFormSubmit(e) {
         gender: document.querySelector("input[name='gender']:checked").value,
         interests: choose,
         address: document.getElementById("address").value,
-        state: document.getElementById("state").value,
+        // state: document.getElementById("state").value,
         city: document.getElementById("city").value,
     }
     isEdit ? updateData(obj) : saveData(obj);

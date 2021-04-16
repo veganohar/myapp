@@ -33,7 +33,16 @@ exports.createCustomer = (req, res) => {
 
 
 exports.getAllCustomers = (req, res) => {
-    Customer.find((err, customers) => {
+    let pq = { 
+        path: 'city',
+        select:"name",
+        populate: {
+          path: 'state',
+          model: 'State',
+          select:"name"
+        } 
+     }
+    Customer.find().populate(pq).exec((err, customers) => {
         if (err) {
             return res.status(500).send({ message: err })
         }

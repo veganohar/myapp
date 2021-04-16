@@ -43,3 +43,5 @@ app.get("/", (req, res) => {
 
 require("./app/routes/customer.routes")(app);
 require("./app/routes/ejs.routes")(app);
+require("./app/routes/states.routes")(app);
+require("./app/routes/cities.routes")(app);

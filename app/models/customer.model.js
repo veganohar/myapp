@@ -11,11 +11,13 @@ const Customer = mongoose.model(
         gender:String,
         interests:[],
         address:String,
-        state:Number,
-        city:Number,
         createdOn:{
             type:Date,
             default:Date.now
+        },
+        city:{
+            type: mongoose.Schema.Types.ObjectId,
+             ref: 'City'
         }
     })
 )
