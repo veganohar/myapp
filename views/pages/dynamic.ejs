@@ -1,0 +1,57 @@
+<html>
+    <head>
+        <title>Dynamic EJS Test</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    </head>
+    <body>
+        <h1><%=heading%></h1>
+        <p><%=content%></p>
+
+        <div class="container-fluid mt-4">
+            <table class="table">
+                    <thead>
+                        <tr>
+                            <th>S.No</th>
+                            <th>Name</th>
+                            <th>Fther's Name</th>
+                            <th>DOB</th>
+                            <!-- <th>Age</th> -->
+                            <th>Phone</th>
+                            <th>Email</th>
+                            <th>Gender</th>
+                            <th>Interests</th>
+                            <th>Address</th>
+                            <th>State</th>
+                            <th>City</th>
+                            <!-- <th>Actions</th> -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% let sno=0; for(let c of customers){
+                           let dob =  c.dob ? c.dob.toISOString().substr(0, 10).split("-").reverse().join("/") : ''
+                           sno++; 
+                           %>
+                            <tr>
+                                <td><%=sno%></td>
+                                <td><%=c.name%></td>
+                                <td><%=c.father_name%></td>
+                                <td><%=dob%></td>
+                                <td><%=c.phone%></td>
+                                <td><%=c.email%></td>
+                                <td><%=c.gender%></td>
+                                <td><%=c.interests%></td>
+                                <td><%=c.address%></td>
+                                <td><%=c.state%></td>
+                                <td><%=c.city%></td>
+                            </tr>
+                            <% } %>
+                    </tbody>
+            </table>
+        </div>
+    </body>
+</html>

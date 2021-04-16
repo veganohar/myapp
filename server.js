@@ -14,6 +14,7 @@ if (!fs.existsSync("reports")) {
 
 app.use(express.static("reports"));
 app.use(cors());
+app.use(express.static('views/js'));
 
 app.listen(port, () => {
     console.log("My App is running on Port " + port);
