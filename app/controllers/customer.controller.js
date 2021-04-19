@@ -1,6 +1,15 @@
 const db = require("../models");
 const Customer = db.customer;
 const Excel = require('exceljs');
+const pq = { 
+    path: 'city',
+    select:"name",
+    populate: {
+      path: 'state',
+      model: 'State',
+      select:"name"
+    } 
+ }
 var fonts = {
     Roboto: {
         normal: 'node_modules/roboto-font/fonts/Roboto/roboto-regular-webfont.ttf',
@@ -33,15 +42,6 @@ exports.createCustomer = (req, res) => {
 
 
 exports.getAllCustomers = (req, res) => {
-    let pq = { 
-        path: 'city',
-        select:"name",
-        populate: {
-          path: 'state',
-          model: 'State',
-          select:"name"
-        } 
-     }
     Customer.find().populate(pq).exec((err, customers) => {
         if (err) {
             return res.status(500).send({ message: err })
@@ -98,7 +98,7 @@ createExcelFile = async (data) => {
         { header: 'Interests', key: 'hobbies' },
         { header: 'Address', key: 'address' },
         { header: 'State', key: 'state' },
-        { header: 'City', key: 'city' },
+        { header: 'City', key: 'c' },
     ];
 
     worksheet2.columns = [
@@ -125,7 +125,10 @@ createExcelFile = async (data) => {
         obj.index = rowIndex;
         obj.age = findAge(obj.dob);
         obj.hobbies = obj.interests.join(",");
+        obj.state = e.city.state.name;
+        obj.c = e.city.name;
         worksheet.addRow(obj);
+
 
         obj.interests.forEach((e) => {
             let obj1 = {};
@@ -172,7 +175,7 @@ createPDFFile = async (data) => {
     let sno = 0;
     data.forEach(e=>{
         sno ++;
-        let row = [sno,e.name,e.father_name, new Date(e.dob).toISOString().substr(0,10).split("-").reverse().join("/"),findAge(e.dob),e.phone,e.email,e.gender,e.interests,e.address,e.state,e.city];
+        let row = [sno,e.name,e.father_name, new Date(e.dob).toISOString().substr(0,10).split("-").reverse().join("/"),findAge(e.dob),e.phone,e.email,e.gender,e.interests,e.address,e.city.state.name,e.city.name];
         pdfTableBody.push(row);
     })
     var dd = {
@@ -197,7 +200,7 @@ createPDFFile = async (data) => {
 
 
 exports.generateReport = (req, res) => {
-    Customer.find(async (err, customers) => {
+    Customer.find().populate(pq).exec(async (err, customers) => {
         if (err) {
             return res.status(500).send({ message: err })
         }

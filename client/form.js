@@ -78,6 +78,7 @@ function onEdit(obj) {
     document.getElementById("sbtn").innerText = "Update";
     dataForm.reset();
     let rec = JSON.parse(decodeURIComponent(obj));
+    console.log(rec);
     selId = rec._id
     document.getElementById("name").value = rec.name;
     document.getElementById("father_name").value = rec.father_name;
@@ -90,9 +91,9 @@ function onEdit(obj) {
     for (let e of rec.interests) {
         document.querySelector(`input[value='${e}']`).checked = true;
     }
-    document.getElementById("state").value = rec.state;
-    onStateSel();
-    document.getElementById("city").value = rec.city;
+    document.getElementById("state").value = rec.city.state._id;
+    onStateSel(rec.city._id);
+    // document.getElementById("city").value = rec.city._id;
 }
 
 
@@ -129,7 +130,7 @@ function generateStates() {
 }
 
 
-function onStateSel() {
+function onStateSel(cid) {
     let sid = document.getElementById("state").value;
     console.log(sid);
 
@@ -139,17 +140,21 @@ function onStateSel() {
             console.log(data);
             cities = data.data;
             console.log(cities);
-            generateCities();
+            generateCities(cid);
         }
     )
 }
 
-function generateCities() {
+function generateCities(cid) {
     let options = `<option value="" selected disabled>Select a City</option>`;
     for (let e of cities) {
         options += `<option value="${e._id}">${e.name}</option>`;
     }
     document.getElementById("city").innerHTML = options;
+    if(isEdit){
+        document.getElementById("city").value = cid;
+    }
+
 }
 
 function onFormSubmit(e) {
